@@ -1,0 +1,12 @@
+//how asyn/await is used in REACT JS 
+
+const getUser() = async() =>{
+    try{
+        const response = await axios.get(
+            "http://localhost:8080/api/users"
+        );
+        console.log(response.data);
+    } catch(error){
+        console.log(error);
+    }
+};

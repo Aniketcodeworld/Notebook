@@ -1,0 +1,67 @@
+JWT AUTHENTICATION AND AUTHORIZATION
+
+BEFORE JWT:
+SESSION MANAGEMENT 
+
+users logs in server validates
+POST/login server verifies password
+
+session_id = abc123 (stored in server memory)
+
+#Browser gets:
+Cookie
+SESSION_ID=abc123
+
+Every request:
+
+GET /profile
+Cookie: SESSION_ID=abc123
+
+#Problem:
+
+Millions of users
+Millions of sessions
+
+Consumes memory.
+
+Hard to scale.
+                                   
+                                   JWT SOLUTION 
+
+  JWT = JSON Web Token
+
+Instead of storing session on server:
+
+##Store identity inside token.
+
+Server becomes stateless.                                 
+
+
+#JWT Structure
+
+JWT has 3 parts:             
+
+HEADER
+PAYLOAD
+SIGNATURE
+
+...Example:
+
+eyJhb...
+.
+eyJzdW...
+.
+a8fdj3...
+
+Part 1 Header
+Contains algorithm.
+
+Part 2 Payload
+Contains user information.
+
+Part 3 Signature
+Generated using secret key.
+Example:
+secret = mysecretkey123 
+
+Server only knows this.
