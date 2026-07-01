@@ -1,0 +1,428 @@
+
+
+# AWS
+
+## 1. Which AWS services are you currently using in your project?
+
+Answer:
+
+"In my recent project, I used Amazon EC2 to host Spring Boot microservices, Amazon RDS for MySQL, Amazon S3 for storing uploaded files like user profile images and documents, IAM for secure access management, CloudWatch for monitoring logs and metrics, and Route 53 for DNS management. For deployment, I used GitHub Actions to automate CI/CD."
+
+---
+
+## 2. What is Amazon S3?
+
+Answer:
+
+"Amazon S3 is an object storage service used to store files like images, videos, PDFs, backups, and logs. It provides high durability, scalability, and availability. Instead of storing files inside the database, we store them in S3 and keep only the file URL in the database."
+
+---
+
+## 3. What are the use cases of S3?
+
+Answer:
+
+* File uploads
+* Static website hosting
+* Application backups
+* Log storage
+* ML datasets
+* Data archival
+* Media storage
+* Disaster recovery
+
+---
+
+## 4. How do you store application data in AWS?
+
+Answer:
+
+"Structured data like users, orders, and products are stored in Amazon RDS MySQL. Files like images and documents are stored in Amazon S3. Cache data can be stored in Redis (ElastiCache), and logs are sent to CloudWatch."
+
+---
+
+## 5. Which AWS database services have you worked with?
+
+Answer:
+
+"I have mainly worked with Amazon RDS MySQL. I understand DynamoDB as a NoSQL database used for high-speed key-value access, but my production work has primarily been with RDS."
+
+---
+
+## 6. Difference between Amazon RDS and DynamoDB
+
+| RDS                        | DynamoDB                         |
+| -------------------------- | -------------------------------- |
+| Relational                 | NoSQL                            |
+| SQL                        | Key-Value                        |
+| Fixed Schema               | Flexible Schema                  |
+| Supports JOIN              | No JOIN                          |
+| ACID Transactions          | Eventually Consistent by default |
+| Best for banking/ecommerce | Best for gaming/IoT              |
+
+---
+
+## 7. How does your Spring Boot application connect to AWS database?
+
+Answer:
+
+"The Spring Boot application connects to Amazon RDS using the JDBC URL configured in application.yml. The application uses Spring Data JPA with Hibernate. Database credentials are stored securely using environment variables or AWS Secrets Manager."
+
+---
+
+# Microservices
+
+## 8. Suppose a microservice port changes. How will another service identify it?
+
+Answer:
+
+"We don't communicate using IP addresses or ports. We register services with Eureka Service Registry. Other services call them using the service name. The load balancer automatically resolves the correct instance."
+
+Example:
+
+```
+http://USER-SERVICE/users
+```
+
+instead of
+
+```
+http://localhost:8081/users
+```
+
+---
+
+## 9. Why do we use Service Discovery?
+
+Answer:
+
+"Because microservices are dynamic. Instances may start, stop, or scale automatically. Service Discovery helps services find each other without hardcoding IP addresses."
+
+---
+
+## 10. Role of API Gateway
+
+Answer:
+
+"The API Gateway acts as a single entry point. It performs request routing, authentication, rate limiting, logging, load balancing, SSL termination, and response aggregation."
+
+---
+
+## 11. Why communicate using service names instead of IP?
+
+Answer:
+
+"Because IPs change whenever services restart or scale. Service names remain constant and the discovery server resolves them automatically."
+
+---
+
+# Distributed Transactions
+
+## 12. What is Saga Pattern?
+
+Answer:
+
+"Saga Pattern manages transactions across multiple microservices using a sequence of local transactions. If one service fails, previously completed services execute compensation transactions to undo their work."
+
+---
+
+## 13. Why Saga instead of Distributed Transactions?
+
+Answer:
+
+"Distributed transactions using Two-Phase Commit reduce performance and create tight coupling. Saga provides better scalability, loose coupling, and higher availability."
+
+---
+
+## 14. Explain Choreography Saga
+
+Answer:
+
+"In Choreography, there is no central controller. Services communicate using events."
+
+Example:
+
+Order Created
+
+↓
+
+Inventory Service reserves stock
+
+↓
+
+Payment Service deducts payment
+
+↓
+
+Shipping Service creates shipment
+
+If payment fails:
+
+Payment Failed Event
+
+↓
+
+Inventory releases stock
+
+↓
+
+Order gets cancelled
+
+---
+
+## 15. What are Compensation Transactions?
+
+Answer:
+
+"They are rollback operations that undo previously completed local transactions."
+
+Example:
+
+Payment Success
+
+↓
+
+Inventory Reserved
+
+↓
+
+Shipping Failed
+
+↓
+
+Refund Payment
+
+↓
+
+Release Inventory
+
+---
+
+## 16. How does Saga maintain consistency?
+
+Answer:
+
+"Each service performs its own local transaction. If a later transaction fails, compensation transactions are triggered to restore consistency."
+
+---
+
+# Security
+
+## 17. How do you secure microservices?
+
+Answer:
+
+"I secure microservices using JWT authentication, HTTPS, Spring Security, API Gateway authentication, role-based authorization, encrypted passwords using BCrypt, and secure communication between services."
+
+---
+
+## 18. Explain JWT authentication flow
+
+Answer:
+
+1. User logs in
+2. Authentication service verifies credentials
+3. JWT token is generated
+4. Token is returned
+5. Client sends token in Authorization header
+6. Gateway validates JWT
+7. Request reaches microservice
+
+---
+
+## 19. How do services authenticate with each other?
+
+Answer:
+
+"We use JWT propagation or OAuth2 client credentials. Internal communication can also be secured using mTLS in production."
+
+---
+
+## 20. How does frontend communicate with backend?
+
+Answer:
+
+"The frontend sends requests only to the API Gateway. The Gateway authenticates the request and forwards it to the appropriate microservice."
+
+---
+
+## 21. Why API Gateway instead of direct calls?
+
+Answer:
+
+"Without Gateway, clients need to know every service. Gateway simplifies routing, authentication, rate limiting, monitoring, and version management."
+
+---
+
+## 22. How do you aggregate responses?
+
+Answer:
+
+"We create an Aggregator service or use the API Gateway to call multiple services asynchronously using CompletableFuture or WebFlux and combine the responses."
+
+---
+
+# High Traffic
+
+## 23. One service suddenly receives huge traffic. What will you do?
+
+Answer:
+
+"I'll scale the service horizontally using multiple instances behind a load balancer, enable caching using Redis, optimize database queries, use asynchronous messaging where possible, and configure auto-scaling."
+
+---
+
+## 24. What is Load Balancing?
+
+Answer:
+
+"It distributes incoming requests across multiple service instances to improve availability and prevent server overload."
+
+---
+
+## 25. How does Auto Scaling work?
+
+Answer:
+
+"AWS monitors CPU, memory, or custom metrics. When traffic increases, it launches new instances automatically. When traffic decreases, unnecessary instances are terminated."
+
+---
+
+## 26. How does caching reduce database load?
+
+Answer:
+
+"Frequently accessed data is stored in Redis. Future requests fetch data from cache instead of querying the database, reducing latency and database load."
+
+---
+
+# Fault Tolerance
+
+## 27. What are Cascading Failures?
+
+Answer:
+
+"When one failed service causes dependent services to fail, eventually affecting the whole system."
+
+Example:
+
+Payment fails
+
+↓
+
+Order waits
+
+↓
+
+Shipping waits
+
+↓
+
+Inventory waits
+
+↓
+
+Entire application slows down
+
+---
+
+## 28. How do you prevent cascading failures?
+
+Answer:
+
+"I use Circuit Breaker, Retry, Timeout, Bulkhead, Fallback methods, message queues, and proper monitoring."
+
+---
+
+## 29. Which fault tolerance library have you used?
+
+Answer:
+
+"I have used Resilience4j with Spring Boot. I implemented Circuit Breaker, Retry, Rate Limiter, Bulkhead, and Fallback methods."
+
+Example:
+
+```
+@CircuitBreaker(name="paymentService")
+```
+
+---
+
+# Java
+
+## 30. Explain HashMap internal working
+
+Answer:
+
+"A HashMap stores data as key-value pairs using an array of buckets. The key's hashCode() determines the bucket index. If multiple keys map to the same bucket, they are stored using a LinkedList. Since Java 8, when collisions exceed a threshold and the bucket is large enough, the LinkedList is converted into a Red-Black Tree for faster lookup."
+
+---
+
+## 31. What happens when two keys have the same hashCode?
+
+Answer:
+
+"They go into the same bucket. HashMap then compares keys using equals(). If the keys are different, both entries are stored in the same bucket. If they are equal, the existing value is updated."
+
+---
+
+## 32. Time complexity before and after Java 8
+
+Before Java 8
+
+* Average: O(1)
+* Worst case: O(n)
+
+After Java 8
+
+* Average: O(1)
+* Worst case: O(log n) because LinkedList becomes Red-Black Tree.
+
+---
+
+# Coding Question
+
+## 33. City with maximum repeated characters
+
+```java
+import java.util.*;
+
+public class Main {
+
+    public static String maxRepeatedCity(List<String> cities) {
+        String result = "";
+        int maxRepeat = -1;
+
+        for (String city : cities) {
+            Map<Character, Integer> freq = new HashMap<>();
+
+            for (char ch : city.toLowerCase().toCharArray()) {
+                if (Character.isLetter(ch))
+                    freq.put(ch, freq.getOrDefault(ch, 0) + 1);
+            }
+
+            int repeat = Collections.max(freq.values());
+
+            if (repeat > maxRepeat) {
+                maxRepeat = repeat;
+                result = city;
+            }
+        }
+
+        return result;
+    }
+
+    public static void main(String[] args) {
+        List<String> cities = Arrays.asList("Delhi", "Mumbai", "Chennai", "Pune", "Bangalore");
+        System.out.println(maxRepeatedCity(cities));
+    }
+}
+```
+
+Output:
+
+```
+Bangalore
+```
+
+
