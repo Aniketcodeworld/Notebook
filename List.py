@@ -15,4 +15,7 @@ print(numbers)
 
 numbers = [10,20,30]
 numbers.pop()  #Last element is removed
-numbers.pop(1) #indec 1 element is removed
+numbers.pop(1) #index 1 element is removed
+
+# The pop() method removes the element at the specified position.
+# If you do not specify the index, the pop() method removes the last item in the list.
