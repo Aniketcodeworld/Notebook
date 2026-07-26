@@ -3,6 +3,7 @@ using namespace std;
 void duplicates(vector<int>&arr){
      vector<int>nums;
      int n=arr.size();
+     int count =0;
      unordered_map<int,int>freq;
      for(int i: arr){
          freq[i]++;
