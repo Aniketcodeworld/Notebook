@@ -1,4 +1,8 @@
 #include<bits/stdc++.h>
+#include<iostream>
+#include<vector>
+#include<unordered_map>
+#include<algorithm>
 using namespace std;
 void duplicates(vector<int>&arr){
      vector<int>nums;
